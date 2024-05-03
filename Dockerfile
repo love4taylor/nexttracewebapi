@@ -12,10 +12,12 @@ RUN git clone https://github.com/nxtrace/Ntrace-core.git . && \
 
 FROM ubuntu:22.04
 
+ENV TEST_HOST 0.0.0.0
+
 # 安装所需的软件包
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y python3-pip nginx && \
+    apt-get install -y python3-pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -34,16 +36,9 @@ COPY app.py /app/app.py
 COPY templates /app/templates
 COPY assets /app/assets
 
-# 配置Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
-
 # 设置工作目录
 WORKDIR /app
 
-# Copy start.sh to the container
-COPY entrypoint.sh /app/entrypoint.sh
+EXPOSE 35000
 
-EXPOSE 30080
-
-# 设置脚本作为入口点
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["python3", "-u", "app.py"]
